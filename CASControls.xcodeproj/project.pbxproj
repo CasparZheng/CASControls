@@ -14,6 +14,11 @@
 		EFF3B35D206B94E300CCB03A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFF3B35B206B94E300CCB03A /* LaunchScreen.storyboard */; };
 		EFF3B368206B94E300CCB03A /* CASControlsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B367206B94E300CCB03A /* CASControlsTests.swift */; };
 		EFF3B373206B94E300CCB03A /* CASControlsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B372206B94E300CCB03A /* CASControlsUITests.swift */; };
+		EFF3B382206B94FD00CCB03A /* CASMenuListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */; };
+		EFF3B383206B94FD00CCB03A /* CASAngleListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B381206B94FD00CCB03A /* CASAngleListView.swift */; };
+		EFF3B385206B950500CCB03A /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; };
+		EFF3B386206B952400CCB03A /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; };
+		EFF3B387206B952400CCB03A /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +38,20 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		EFF3B388206B952400CCB03A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				EFF3B387206B952400CCB03A /* SnapKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		EFF3B34F206B94E300CCB03A /* CASControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CASControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF3B352206B94E300CCB03A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -47,6 +66,9 @@
 		EFF3B36E206B94E300CCB03A /* CASControlsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CASControlsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF3B372206B94E300CCB03A /* CASControlsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASControlsUITests.swift; sourceTree = "<group>"; };
 		EFF3B374206B94E300CCB03A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASMenuListView.swift; sourceTree = "<group>"; };
+		EFF3B381206B94FD00CCB03A /* CASAngleListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASAngleListView.swift; sourceTree = "<group>"; };
+		EFF3B384206B950500CCB03A /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +76,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFF3B385206B950500CCB03A /* SnapKit.framework in Frameworks */,
+				EFF3B386206B952400CCB03A /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +101,7 @@
 		EFF3B346206B94E300CCB03A = {
 			isa = PBXGroup;
 			children = (
+				EFF3B384206B950500CCB03A /* SnapKit.framework */,
 				EFF3B351206B94E300CCB03A /* CASControls */,
 				EFF3B366206B94E300CCB03A /* CASControlsTests */,
 				EFF3B371206B94E300CCB03A /* CASControlsUITests */,
@@ -99,6 +124,8 @@
 			children = (
 				EFF3B352206B94E300CCB03A /* AppDelegate.swift */,
 				EFF3B354206B94E300CCB03A /* ViewController.swift */,
+				EFF3B381206B94FD00CCB03A /* CASAngleListView.swift */,
+				EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */,
 				EFF3B356206B94E300CCB03A /* Main.storyboard */,
 				EFF3B359206B94E300CCB03A /* Assets.xcassets */,
 				EFF3B35B206B94E300CCB03A /* LaunchScreen.storyboard */,
@@ -135,6 +162,7 @@
 				EFF3B34B206B94E300CCB03A /* Sources */,
 				EFF3B34C206B94E300CCB03A /* Frameworks */,
 				EFF3B34D206B94E300CCB03A /* Resources */,
+				EFF3B388206B952400CCB03A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -259,7 +287,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFF3B382206B94FD00CCB03A /* CASMenuListView.swift in Sources */,
 				EFF3B355206B94E300CCB03A /* ViewController.swift in Sources */,
+				EFF3B383206B94FD00CCB03A /* CASAngleListView.swift in Sources */,
 				EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -428,6 +458,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UBX9CH9GDX;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = CASControls/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.caspar.www.CASControls;
@@ -443,6 +477,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UBX9CH9GDX;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = CASControls/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.caspar.www.CASControls;
