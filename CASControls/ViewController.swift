@@ -16,7 +16,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         //        addMenuList()
-        addAngleList()
+//        addAngleList()
+        addCheckboxList()
     }
     
     override func didReceiveMemoryWarning() {
@@ -61,6 +62,42 @@ class ViewController: UIViewController {
         list.snp.makeConstraints { (make) in
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(48)
+            make.top.equalToSuperview().offset(100)
+        }
+    }
+    
+    func addCheckboxList() {
+        let item1Range1 = NSRange.init(location: 0, length: "First".lengthOfBytes(using: .utf8))
+        let item1Range2 = NSRange.init(location: "First, Second, ".lengthOfBytes(using: .utf8), length: "Third".lengthOfBytes(using: .utf8))
+        let item1Closure1: CASCheckBoxItem.TapClosure = { (title) in
+            print("select title = \(title)")
+        }
+        let item1Closure2: CASCheckBoxItem.TapClosure = { (title) in
+            print("select title = \(title)")
+        }
+        let item1 = CASCheckBoxItem.init(title: "First, Second, Third, Fourth, Fiveth, sixth, seventh, eighth, nineth, tenth \n gap \n First, Second, Third, Fourth, Fiveth, sixth, seventh, eighth, nineth, tenth",
+                                        ranges: [item1Range1, item1Range2],
+                                        rangeClosures: [item1Closure1, item1Closure2])
+        
+        let item2Range1 = NSRange.init(location: 0, length: "First".lengthOfBytes(using: .utf8))
+        let item2Range2 = NSRange.init(location: "First, Second, ".lengthOfBytes(using: .utf8), length: "Third".lengthOfBytes(using: .utf8))
+        let item2Closure1: CASCheckBoxItem.TapClosure = { (title) in
+            print("select title = \(title)")
+        }
+        let item2Closure2: CASCheckBoxItem.TapClosure = { (title) in
+            print("select title = \(title)")
+        }
+        let item2 = CASCheckBoxItem.init(title: "First, Second, Third, Fourth, Fiveth",
+                                        ranges: [item2Range1, item2Range2],
+                                        rangeClosures: [item2Closure1, item2Closure2])
+
+        
+        let adapter = CASCheckBoxListAdapter.init(style: .dark)
+        let list = CASCheckBoxListView.init(adapter: adapter, items: [item1, item2])
+        self.view.addSubview(list)
+        list.snp.makeConstraints { (make) in
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(120)
             make.top.equalToSuperview().offset(100)
         }
     }

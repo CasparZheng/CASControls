@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EF8CB360206F601C0015CFB8 /* TTTAttributedLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8CB35F206F601C0015CFB8 /* TTTAttributedLabel.framework */; };
+		EF8CB361206F60210015CFB8 /* TTTAttributedLabel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EF8CB35F206F601C0015CFB8 /* TTTAttributedLabel.framework */; };
+		EF8CB362206F60210015CFB8 /* TTTAttributedLabel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EF8CB35F206F601C0015CFB8 /* TTTAttributedLabel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EF8CB364206F60600015CFB8 /* CASCheckBoxListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */; };
+		EF8CB366207107B80015CFB8 /* CASCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB365207107B80015CFB8 /* CASCommon.swift */; };
 		EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B352206B94E300CCB03A /* AppDelegate.swift */; };
 		EFF3B355206B94E300CCB03A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B354206B94E300CCB03A /* ViewController.swift */; };
 		EFF3B358206B94E300CCB03A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFF3B356206B94E300CCB03A /* Main.storyboard */; };
@@ -19,6 +24,10 @@
 		EFF3B385206B950500CCB03A /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; };
 		EFF3B386206B952400CCB03A /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; };
 		EFF3B387206B952400CCB03A /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B384206B950500CCB03A /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EFF3B38A206B980800CCB03A /* CASButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B389206B980800CCB03A /* CASButton.swift */; };
+		EFF3B38C206B9D0700CCB03A /* YYKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B38B206B9D0700CCB03A /* YYKit.framework */; };
+		EFF3B38D206B9D0B00CCB03A /* YYKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B38B206B9D0700CCB03A /* YYKit.framework */; };
+		EFF3B38E206B9D0B00CCB03A /* YYKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EFF3B38B206B9D0700CCB03A /* YYKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,7 +54,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				EF8CB362206F60210015CFB8 /* TTTAttributedLabel.framework in Embed Frameworks */,
 				EFF3B387206B952400CCB03A /* SnapKit.framework in Embed Frameworks */,
+				EFF3B38E206B9D0B00CCB03A /* YYKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -53,6 +64,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		EF8CB35F206F601C0015CFB8 /* TTTAttributedLabel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TTTAttributedLabel.framework; sourceTree = "<group>"; };
+		EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASCheckBoxListView.swift; sourceTree = "<group>"; };
+		EF8CB365207107B80015CFB8 /* CASCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASCommon.swift; sourceTree = "<group>"; };
 		EFF3B34F206B94E300CCB03A /* CASControls.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CASControls.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFF3B352206B94E300CCB03A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFF3B354206B94E300CCB03A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +83,8 @@
 		EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASMenuListView.swift; sourceTree = "<group>"; };
 		EFF3B381206B94FD00CCB03A /* CASAngleListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASAngleListView.swift; sourceTree = "<group>"; };
 		EFF3B384206B950500CCB03A /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
+		EFF3B389206B980800CCB03A /* CASButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASButton.swift; sourceTree = "<group>"; };
+		EFF3B38B206B9D0700CCB03A /* YYKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = YYKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +92,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF8CB361206F60210015CFB8 /* TTTAttributedLabel.framework in Frameworks */,
+				EF8CB360206F601C0015CFB8 /* TTTAttributedLabel.framework in Frameworks */,
+				EFF3B38C206B9D0700CCB03A /* YYKit.framework in Frameworks */,
+				EFF3B38D206B9D0B00CCB03A /* YYKit.framework in Frameworks */,
 				EFF3B385206B950500CCB03A /* SnapKit.framework in Frameworks */,
 				EFF3B386206B952400CCB03A /* SnapKit.framework in Frameworks */,
 			);
@@ -101,6 +121,8 @@
 		EFF3B346206B94E300CCB03A = {
 			isa = PBXGroup;
 			children = (
+				EF8CB35F206F601C0015CFB8 /* TTTAttributedLabel.framework */,
+				EFF3B38B206B9D0700CCB03A /* YYKit.framework */,
 				EFF3B384206B950500CCB03A /* SnapKit.framework */,
 				EFF3B351206B94E300CCB03A /* CASControls */,
 				EFF3B366206B94E300CCB03A /* CASControlsTests */,
@@ -124,8 +146,11 @@
 			children = (
 				EFF3B352206B94E300CCB03A /* AppDelegate.swift */,
 				EFF3B354206B94E300CCB03A /* ViewController.swift */,
+				EF8CB365207107B80015CFB8 /* CASCommon.swift */,
 				EFF3B381206B94FD00CCB03A /* CASAngleListView.swift */,
 				EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */,
+				EFF3B389206B980800CCB03A /* CASButton.swift */,
+				EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */,
 				EFF3B356206B94E300CCB03A /* Main.storyboard */,
 				EFF3B359206B94E300CCB03A /* Assets.xcassets */,
 				EFF3B35B206B94E300CCB03A /* LaunchScreen.storyboard */,
@@ -288,9 +313,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFF3B382206B94FD00CCB03A /* CASMenuListView.swift in Sources */,
+				EF8CB364206F60600015CFB8 /* CASCheckBoxListView.swift in Sources */,
 				EFF3B355206B94E300CCB03A /* ViewController.swift in Sources */,
 				EFF3B383206B94FD00CCB03A /* CASAngleListView.swift in Sources */,
 				EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */,
+				EFF3B38A206B980800CCB03A /* CASButton.swift in Sources */,
+				EF8CB366207107B80015CFB8 /* CASCommon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

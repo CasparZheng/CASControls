@@ -14,8 +14,16 @@ enum CASMenuStyle: Int {
     case dark
 }
 
+//@objc(CASMenuItemType)
+//enum CASMenuItemType: Int {
+//    case normal
+//    case highlight
+//    case strong
+//}
+
 class CASMenuItem: NSObject {
     var title: String
+//    var itemType: ItemType
     
     override init() {
         self.title = ""
@@ -71,16 +79,7 @@ class CASMenuListAdapter: NSObject {
     deinit {
         print("\(type(of: self)) deinit")
     }
-    
-    func currentDeviceAvailableRect() -> CGRect {
-        var safeInsets: UIEdgeInsets = .zero
-        if #available(iOS 11.0, *) {
-            safeInsets = UIApplication.shared.keyWindow?.safeAreaInsets ?? UIEdgeInsets.zero
-        }
-        let rect = UIEdgeInsetsInsetRect(UIScreen.main.bounds, safeInsets)
-        return rect
-    }
-    
+        
     // consider the orientation
     ///
     func updateFontSize(items: [CASMenuItem]) {
@@ -101,7 +100,7 @@ class CASMenuListAdapter: NSObject {
         }
         
         let label = self.normalLabel()
-        let rect = self.currentDeviceAvailableRect()
+        let rect = CASCommon.shared.currentDeviceAvailableRect()
         var width: CGFloat = 0
         if (self.allInOnePage) {
             let itemCountPerPage: CGFloat = CGFloat(items.count)
@@ -301,7 +300,7 @@ class CASMenuListView: UIView {
     var adapter: CASMenuListAdapter!
     var items: [CASMenuItem]?
     var selectedIndex: Int = 0
-    @objc var selectActionClosure: ((CASMenuItem)->Void)?
+    var selectActionClosure: ((CASMenuItem)->Void)?
     private var collectionView: UICollectionView!
     private var itemSize: CGSize = .zero
     
@@ -357,7 +356,7 @@ class CASMenuListView: UIView {
     
     private func updateItemSize() {
         var itemSize: CGSize = .zero
-        let rect = self.adapter.currentDeviceAvailableRect()
+        let rect = CASCommon.shared.currentDeviceAvailableRect()
         if self.adapter.allInOnePage {
             itemSize = CGSize.init(width: rect.width / CGFloat(self.items?.count ?? 1), height: self.adapter.itemHeight)
         }else if self.adapter.itemCountPerPage == 0 {
