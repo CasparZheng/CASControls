@@ -73,7 +73,10 @@ class CASMenuListAdapter: NSObject {
     }
     
     func currentDeviceAvailableRect() -> CGRect {
-        let safeInsets: UIEdgeInsets = UIApplication.shared.keyWindow?.safeAreaInsets ?? UIEdgeInsets.zero
+        var safeInsets: UIEdgeInsets = .zero
+        if #available(iOS 11.0, *) {
+            safeInsets = UIApplication.shared.keyWindow?.safeAreaInsets ?? UIEdgeInsets.zero
+        }
         let rect = UIEdgeInsetsInsetRect(UIScreen.main.bounds, safeInsets)
         return rect
     }
@@ -109,7 +112,7 @@ class CASMenuListAdapter: NSObject {
             let itemCountPerPage: CGFloat = CGFloat(self.itemCountPerPage)
             width = rect.width / itemCountPerPage
         }
-        label.frame = CGRect.init(x: 0, y: 0, width: width, height: self.itemHeight)
+        label.frame = CGRect.init(x: 0, y: 0, width: width, height: self.itemHeight - self.itemSelectedIndicatorSize.height)
         
         var maxFontSize: CGFloat = self.fontSize
         switch UIApplication.shared.statusBarOrientation {
@@ -245,40 +248,40 @@ private class CASMenuItemView: UICollectionViewCell {
     
     func configurateWith(adapter: CASMenuListAdapter, item: CASMenuItem?) {
         self.adapter = adapter
-        self.titleLabel?.removeFromSuperview()
-        self.indicatorView?.removeFromSuperview()
-        self.titleLabel?.snp.removeConstraints()
-        self.indicatorView?.snp.removeConstraints()
-        self.titleLabel = nil
-        self.indicatorView = nil
         setup(adapter: adapter, item: item)
     }
     
     private func setup(adapter: CASMenuListAdapter, item: CASMenuItem?) {
-        let label = adapter.normalLabel()
-        label.text = item?.title
-        label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
-
-        let indicatorView = UIView()
-        indicatorView.backgroundColor = self.adapter.indicatorViewBackgroundColor()
-        indicatorView.isHidden = !self.isSelected
-        
-        self.contentView.addSubview(label)
-        self.contentView.addSubview(indicatorView)
-        
-        self.titleLabel = label
-        self.indicatorView = indicatorView
-        
-        self.titleLabel?.snp.makeConstraints { (make) in
-            make.center.equalToSuperview()
-            make.leading.equalToSuperview().offset(adapter.kItemLabelTrailingAndLeadingGap)
-            make.trailing.equalToSuperview().offset(-adapter.kItemLabelTrailingAndLeadingGap)
-        }
-        self.indicatorView?.snp.makeConstraints { (make) in
-            make.size.equalTo(adapter.itemSelectedIndicatorSize)
-            make.centerX.bottom.equalToSuperview()
+        if self.titleLabel == nil {
+            let label = adapter.normalLabel()
+            label.text = item?.title
+            label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
+            self.contentView.addSubview(label)
+            self.titleLabel = label
+            self.titleLabel?.snp.makeConstraints { (make) in
+                make.center.equalToSuperview()
+                make.leading.equalToSuperview().offset(adapter.kItemLabelTrailingAndLeadingGap)
+                make.trailing.equalToSuperview().offset(-adapter.kItemLabelTrailingAndLeadingGap)
+            }
+        }else {
+            self.titleLabel?.text = item?.title
+            self.titleLabel?.textColor = self.adapter.fontColor(isSelected: self.isSelected)
         }
         
+        if self.indicatorView == nil {
+            let indicatorView = UIView()
+            indicatorView.backgroundColor = self.adapter.indicatorViewBackgroundColor()
+            indicatorView.isHidden = !self.isSelected
+            self.contentView.addSubview(indicatorView)
+            self.indicatorView = indicatorView
+            self.indicatorView?.snp.makeConstraints { (make) in
+                make.size.equalTo(adapter.itemSelectedIndicatorSize)
+                make.centerX.bottom.equalToSuperview()
+            }
+        }else {
+            self.indicatorView?.backgroundColor = self.adapter.indicatorViewBackgroundColor()
+            self.indicatorView?.isHidden = !self.isSelected
+        }
     }
     
     private func updateUI() {
@@ -298,7 +301,9 @@ class CASMenuListView: UIView {
     var adapter: CASMenuListAdapter!
     var items: [CASMenuItem]?
     var selectedIndex: Int = 0
+    @objc var selectActionClosure: ((CASMenuItem)->Void)?
     private var collectionView: UICollectionView!
+    private var itemSize: CGSize = .zero
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -324,7 +329,9 @@ class CASMenuListView: UIView {
     private func setup(adapter: CASMenuListAdapter) {
         self.adapter = adapter
         self.updateFontSize()
+        self.updateItemSize()
         let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: self.flowLayout())
+        collectionView.backgroundColor = UIColor.clear
         collectionView.isPagingEnabled = (adapter.allInOnePage == false) && (adapter.itemCountPerPage == 0)
         collectionView.delegate = self
         collectionView.dataSource = self
@@ -348,6 +355,19 @@ class CASMenuListView: UIView {
         }
     }
     
+    private func updateItemSize() {
+        var itemSize: CGSize = .zero
+        let rect = self.adapter.currentDeviceAvailableRect()
+        if self.adapter.allInOnePage {
+            itemSize = CGSize.init(width: rect.width / CGFloat(self.items?.count ?? 1), height: self.adapter.itemHeight)
+        }else if self.adapter.itemCountPerPage == 0 {
+            itemSize = CGSize.init(width: self.adapter.itemWidth, height: self.adapter.itemHeight)
+        }else {
+            itemSize = CGSize.init(width: rect.width / CGFloat(self.adapter.itemCountPerPage), height: self.adapter.itemHeight)
+        }
+        self.itemSize = itemSize
+    }
+    
     @objc private func statusBarOrientationChanged(sender: Notification) {
         self.updateFontSize()
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
@@ -360,15 +380,8 @@ class CASMenuListView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
-        let rect = self.adapter.currentDeviceAvailableRect()
-        if self.adapter.allInOnePage {
-            layout.itemSize = CGSize.init(width: rect.width / CGFloat(self.items?.count ?? 1), height: self.adapter.itemHeight)
-        }else if self.adapter.itemCountPerPage == 0 {
-            layout.itemSize = CGSize.init(width: self.adapter.itemWidth, height: self.adapter.itemHeight)
-        }else {
-            layout.itemSize = CGSize.init(width: rect.width / CGFloat(self.adapter.itemCountPerPage), height: self.adapter.itemHeight)
-        }
         layout.scrollDirection = .horizontal
+        layout.itemSize = self.itemSize
         layout.headerReferenceSize = CGSize.zero
         layout.footerReferenceSize = CGSize.zero
         layout.sectionInset = UIEdgeInsets.zero
@@ -381,7 +394,7 @@ class CASMenuListView: UIView {
 }
 
 // MARK: collection delegate, dataSource
-extension CASMenuListView: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CASMenuListView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // data source
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.items?.count ?? 0
@@ -395,6 +408,8 @@ extension CASMenuListView: UICollectionViewDelegate, UICollectionViewDataSource 
             cell.configurateWith(adapter: self.adapter, item: self.items?[indexPath.row])
             if self.selectedIndex == indexPath.row {
                 cell.isSelected = true
+            }else {
+                cell.isSelected = false
             }
         }
         return cell
@@ -408,9 +423,20 @@ extension CASMenuListView: UICollectionViewDelegate, UICollectionViewDataSource 
             cell?.isSelected = false
         }
         self.selectedIndex = indexPath.row
+        let counts: Int = self.items?.count ?? 0
+        if counts > indexPath.row, let item = self.items?[indexPath.row] {
+            self.selectActionClosure?(item)
+        }else {
+            print("occur errors, index out of range.")
+        }
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         print("de-select index = \(indexPath)")
+    }
+    
+    // flowlayout
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return self.itemSize
     }
 }
 
