@@ -48,7 +48,7 @@ class CASAngleListAdapter: NSObject {
     
     private let kSelectedFontColorOfStyleDark = UIColor.white
     private let kUnSelectedFontColorOfStyleDark = UIColor.init(white: 1.0, alpha: 0.55)
-    private let kImageViewBackgroundColorOfStyleDark = UIColor.init(red: 0x1Ap0 / 0xFFp0, green: 0x1Ap0 / 0xFFp0, blue: 0x1Ap0 / 0xFFp0, alpha: 1.0) // 0xFFD200
+    private let kImageViewBackgroundColorOfStyleDark = UIColor.init(red: 0x1Ap0 / 0xFFp0, green: 0x1Ap0 / 0xFFp0, blue: 0x1Ap0 / 0xFFp0, alpha: 1.0) // 0x1A1A1A
     private let kSelectedImageViewBorderColorOfStyleDark = UIColor.init(red: 0xFFp0 / 0xFFp0, green: 0xD2p0 / 0xFFp0, blue: 0x00p0 / 0xFFp0, alpha: 1.0) // 0xFFD200
     let kSelectedImageViewBorderWidth: CGFloat = 2.0
     let kImageViewCornerRadius: CGFloat = 4.0
@@ -56,9 +56,9 @@ class CASAngleListAdapter: NSObject {
     let kItemsGap: CGFloat = 16
     let kItemsCollectionViewEdgeInsets: UIEdgeInsets = UIEdgeInsets.init(top: 0.0, left: 24.0, bottom: 0.0, right: 24.0)
     let kCellReuseID = "cellID"
-
     
-    init(style: Style) {
+    
+    @objc init(style: Style) {
         self.style = style
         super.init()
     }
@@ -160,37 +160,48 @@ private class CASAngleItemView: UICollectionViewCell {
     }
 
     private func setup(adapter: CASAngleListAdapter, item: CASAngleItem?) {
-        
-        let label = adapter.normalLabel()
-        label.text = item?.title
-        label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
-
-        let imageView = UIImageView()
-        let imageName: String = item?.imageName ?? ""
-        imageView.image = UIImage.init(named: imageName)
-        imageView.backgroundColor = adapter.imageBackgroundColor(isSelected: self.isSelected)
-        imageView.layer.borderColor = adapter.imageBorderColor(isSelected: self.isSelected).cgColor
-        imageView.layer.borderWidth = self.isSelected ? adapter.kSelectedImageViewBorderWidth : 0
-        imageView.layer.cornerRadius = adapter.kImageViewCornerRadius
-        imageView.layer.masksToBounds = true
-        
-        self.contentView.addSubview(label)
-        self.contentView.addSubview(imageView)
-
-        self.titleLabel = label
-        self.imageView = imageView
-
-        self.titleLabel?.snp.makeConstraints { (make) in
-            make.top.equalTo(self.imageView!.snp.bottom).offset(adapter.kItemImageAndLabelGap)
-            make.bottom.equalToSuperview()
-            make.trailing.leading.equalToSuperview()
+        if self.imageView == nil {
+            let imageView = UIImageView()
+            let imageName: String = item?.imageName ?? ""
+            imageView.image = UIImage.init(named: imageName)
+            imageView.backgroundColor = adapter.imageBackgroundColor(isSelected: self.isSelected)
+            imageView.layer.borderColor = adapter.imageBorderColor(isSelected: self.isSelected).cgColor
+            imageView.layer.borderWidth = self.isSelected ? adapter.kSelectedImageViewBorderWidth : 0
+            imageView.layer.cornerRadius = adapter.kImageViewCornerRadius
+            imageView.layer.masksToBounds = true
+            self.contentView.addSubview(imageView)
+            self.imageView = imageView
+            self.imageView?.snp.makeConstraints { (make) in
+                make.size.equalTo(adapter.imageViewSize)
+                make.centerX.top.equalToSuperview()
+                make.top.leading.trailing.equalToSuperview()
+                make.height.equalTo(adapter.imageViewSize.height)
+            }
+        }else {
+            let imageName: String = item?.imageName ?? ""
+            self.imageView?.image = UIImage.init(named: imageName)
+            self.imageView?.backgroundColor = adapter.imageBackgroundColor(isSelected: self.isSelected)
+            self.imageView?.layer.borderColor = adapter.imageBorderColor(isSelected: self.isSelected).cgColor
+            self.imageView?.layer.borderWidth = self.isSelected ? adapter.kSelectedImageViewBorderWidth : 0
         }
-        self.imageView?.snp.makeConstraints { (make) in
-            make.size.equalTo(adapter.imageViewSize)
-            make.centerX.top.equalToSuperview()
-            make.top.leading.trailing.equalToSuperview()
-            make.height.equalTo(adapter.imageViewSize.height)
+        
+        if self.titleLabel == nil {
+            let label = adapter.normalLabel()
+            label.text = item?.title
+            label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
+            self.contentView.addSubview(label)
+            self.titleLabel = label
+            self.titleLabel?.snp.makeConstraints { (make) in
+                make.top.equalTo(self.imageView!.snp.bottom).offset(adapter.kItemImageAndLabelGap)
+                make.bottom.equalToSuperview()
+                make.trailing.leading.equalToSuperview()
+            }
+        }else {
+            self.titleLabel?.text = item?.title
+            self.titleLabel?.textColor = self.adapter.fontColor(isSelected: self.isSelected)
         }
+        
+        
     }
 
     private func updateUI() {
@@ -207,10 +218,25 @@ private class CASAngleItemView: UICollectionViewCell {
 }
 
 class CASAngleListView: UIView {
-    var adapter: CASAngleListAdapter!
-    var items: [CASAngleItem]?
-    var selectedIndex: Int = 0
+    @objc var adapter: CASAngleListAdapter!
+    @objc var items: [CASAngleItem]? {
+        didSet {
+            if let collectionView = self.collectionView {
+                self.itemSize = self.adapter.calculateItemSize(items: items ?? [CASAngleItem]())
+                collectionView.reloadData()
+            }
+        }
+    }
+    @objc var selectedIndex: Int = 0 {
+        didSet {
+            if let collection = self.collectionView {
+                collection.reloadData()
+            }
+        }
+    }
+    @objc var selectActionClosure: ((CASAngleItem)->Void)?
     private var collectionView: UICollectionView!
+    private var itemSize: CGSize = .zero
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -222,7 +248,7 @@ class CASAngleListView: UIView {
         self.setup(adapter: CASAngleListAdapter())
     }
     
-    init(adapter: CASAngleListAdapter, items: [CASAngleItem]) {
+    @objc init(adapter: CASAngleListAdapter, items: [CASAngleItem]) {
         super.init(frame: CGRect.zero)
         self.items = items
         self.setup(adapter: adapter)
@@ -234,7 +260,9 @@ class CASAngleListView: UIView {
     
     private func setup(adapter: CASAngleListAdapter) {
         self.adapter = adapter
+        self.itemSize = self.adapter.calculateItemSize(items: self.items ?? [CASAngleItem]())
         let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: self.flowLayout())
+        collectionView.backgroundColor = UIColor.clear
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(CASAngleItemView.self, forCellWithReuseIdentifier: adapter.kCellReuseID)
@@ -253,7 +281,7 @@ class CASAngleListView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.minimumLineSpacing = self.adapter.kItemsGap
         layout.minimumInteritemSpacing = 0
-        layout.itemSize = self.adapter.calculateItemSize(items: self.items ?? [CASAngleItem]())
+        layout.itemSize = self.itemSize
         layout.scrollDirection = .horizontal
         layout.headerReferenceSize = CGSize.zero
         layout.footerReferenceSize = CGSize.zero
@@ -267,7 +295,7 @@ class CASAngleListView: UIView {
 }
 
 // MARK: collection delegate, dataSource
-extension CASAngleListView: UICollectionViewDelegate, UICollectionViewDataSource {
+extension CASAngleListView: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     // data source
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         let counts: Int = self.items?.count ?? 0
@@ -282,6 +310,8 @@ extension CASAngleListView: UICollectionViewDelegate, UICollectionViewDataSource
             cell.configurateWith(adapter: self.adapter, item: self.items?[indexPath.row])
             if self.selectedIndex == indexPath.row {
                 cell.isSelected = true
+            }else {
+                cell.isSelected = false
             }
         }
         return cell
@@ -295,9 +325,22 @@ extension CASAngleListView: UICollectionViewDelegate, UICollectionViewDataSource
             cell?.isSelected = false
         }
         self.selectedIndex = indexPath.row
+        
+        let counts: Int = self.items?.count ?? 0
+        if counts > selectedIndex, let item = self.items?[selectedIndex] {
+            self.selectActionClosure?(item)
+        }else {
+            print("occur errors, index out of range.")
+        }
+        
     }
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         print("de-select index = \(indexPath)")
+    }
+    
+    // flowlayout
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return self.itemSize
     }
 }
 
