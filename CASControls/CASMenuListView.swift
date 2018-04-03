@@ -44,9 +44,10 @@ class CASMenuListAdapter: NSObject {
     typealias Style = CASMenuStyle
     
     var style: Style = .dark
-    // whether use the unification font size, if set true, will update fontSize property automatically
-    var useUnificationFontSize: Bool = false
-    var fontSize: CGFloat = 14.0
+    // whether use the unification font size, if set true, will update currentFontSize property automatically (will store some interactive values, if needs reset, should call 'removeStoredValues')
+    @objc var useUnificationFontSize: Bool = false
+    var initialFontSize: CGFloat = 14.0
+    var currentFontSize: CGFloat = 14.0
     
     // if value is false, all items will layout in one page (UIScreen.main.bounds.width)
     var allInOnePage: Bool = true
@@ -61,8 +62,20 @@ class CASMenuListAdapter: NSObject {
     private let kUnSelectedFontColorOfStyleDark = UIColor.init(white: 1.0, alpha: 0.55)
     private let kBackgroundColorOfStyleDark = UIColor.black
     private let kIndicatorViewColorOfStyleDark = UIColor.init(red: 0xFFp0 / 0xFFp0, green: 0xD2p0 / 0xFFp0, blue: 0x00p0 / 0xFFp0, alpha: 1.0) // 0xFFD200
-    private var verticalMaxFontSize: CGFloat = 0 // inner stored for update fontSize
-    private var horizontalMaxFontSize: CGFloat = 0 // inner stored for update fontSize
+    private var kVerticalMaxFontSize: CGFloat = 0 { // inner stored for update currentFontSize
+        didSet {
+            if kVerticalMaxFontSize > initialFontSize {
+                kVerticalMaxFontSize = initialFontSize
+            }
+        }
+    }
+    private var kHorizontalMaxFontSize: CGFloat = 0 { // inner stored for update currentFontSize
+        didSet {
+            if kHorizontalMaxFontSize > initialFontSize {
+                kHorizontalMaxFontSize = initialFontSize
+            }
+        }
+    }
     
     let kItemLabelTrailingAndLeadingGap: CGFloat = 8
     let kCellReuseID = "cellID"
@@ -79,10 +92,10 @@ class CASMenuListAdapter: NSObject {
     deinit {
         print("\(type(of: self)) deinit")
     }
-        
+    
     // consider the orientation
     ///
-    func updateFontSize(items: [CASMenuItem]) {
+    func updateCurrentFontSize(items: [CASMenuItem]) {
         func calculateMinFontSize(initialFontSize: CGFloat, items: [CASMenuItem], label: UILabel) -> CGFloat {
             var innerMinSize: CGFloat = initialFontSize
             for index in 0..<items.count {
@@ -111,26 +124,27 @@ class CASMenuListAdapter: NSObject {
             let itemCountPerPage: CGFloat = CGFloat(self.itemCountPerPage)
             width = rect.width / itemCountPerPage
         }
+        width = width - self.kItemLabelTrailingAndLeadingGap * 2 // each label remains left and right gap
         label.frame = CGRect.init(x: 0, y: 0, width: width, height: self.itemHeight - self.itemSelectedIndicatorSize.height)
         
-        var maxFontSize: CGFloat = self.fontSize
+        var maxFontSize: CGFloat = self.currentFontSize
         switch UIApplication.shared.statusBarOrientation {
         case .landscapeLeft:fallthrough
         case .landscapeRight:
-            if self.horizontalMaxFontSize == 0 {
+            if self.kHorizontalMaxFontSize == 0 {
                 maxFontSize = calculateMinFontSize(initialFontSize: maxFontSize, items: items, label: label)
-                self.horizontalMaxFontSize = maxFontSize
+                self.kHorizontalMaxFontSize = maxFontSize
             }else {
-                maxFontSize = self.horizontalMaxFontSize
+                maxFontSize = self.kHorizontalMaxFontSize
             }
         case .portrait:fallthrough
         case .portraitUpsideDown:fallthrough
         case .unknown:
-            if self.verticalMaxFontSize == 0 {
+            if self.kVerticalMaxFontSize == 0 {
                 maxFontSize = calculateMinFontSize(initialFontSize: maxFontSize, items: items, label: label)
-                self.verticalMaxFontSize = maxFontSize
+                self.kVerticalMaxFontSize = maxFontSize
             }else {
-                maxFontSize = self.verticalMaxFontSize
+                maxFontSize = self.kVerticalMaxFontSize
             }
         }
 
@@ -144,7 +158,7 @@ class CASMenuListAdapter: NSObject {
                 minFontSize = tempFontSize
             }
         }
-        self.fontSize = minFontSize
+        self.currentFontSize = minFontSize
     }
     
     func fontColor(isSelected: Bool) -> UIColor {
@@ -162,14 +176,19 @@ class CASMenuListAdapter: NSObject {
     }
     
     func font(isSelected: Bool) -> UIFont {
-        return UIFont.systemFont(ofSize: self.fontSize, weight: isSelected ? .bold : .regular)
+        return UIFont.systemFont(ofSize: self.currentFontSize, weight: isSelected ? .bold : .regular)
     }
 
     /// call this action when set the frame complete
     func updateUnificationFontSize(label: UILabel) {
-        if label.font.pointSize != self.fontSize {
-            self.fontSize = label.font.pointSize
+        if label.font.pointSize != self.currentFontSize {
+            self.currentFontSize = label.font.pointSize
         }
+    }
+    
+    func removeStoredValues() {
+        self.kVerticalMaxFontSize = 0
+        self.kHorizontalMaxFontSize = 0
     }
     
     var nearestTimes: Int = 0
@@ -216,10 +235,10 @@ class CASMenuListAdapter: NSObject {
     
     func normalLabel() -> UILabel {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: self.fontSize)
+        label.font = UIFont.systemFont(ofSize: self.currentFontSize)
         label.textAlignment = .center
         label.numberOfLines = 1 // designer confirmed
-        label.adjustsFontSizeToFitWidth = self.useUnificationFontSize
+        //        label.adjustsFontSizeToFitWidth = self.useUnificationFontSize
         return label
     }
 }
@@ -297,10 +316,24 @@ private class CASMenuItemView: UICollectionViewCell {
 }
 
 class CASMenuListView: UIView {
-    var adapter: CASMenuListAdapter!
-    var items: [CASMenuItem]?
-    var selectedIndex: Int = 0
-    var selectActionClosure: ((CASMenuItem)->Void)?
+    @objc var adapter: CASMenuListAdapter!
+    @objc var items: [CASMenuItem]? {
+        didSet {
+            if let collectionView = self.collectionView {
+                self.removeStoredItemSizeRelatives()
+                self.updateItemSize()
+                collectionView.reloadData()
+            }
+        }
+    }
+    @objc var selectedIndex: Int = 0 {
+        didSet {
+            if let collection = self.collectionView {
+                collection.reloadData()
+            }
+        }
+    }
+    @objc var selectActionClosure: ((CASMenuItem)->Void)?
     private var collectionView: UICollectionView!
     private var itemSize: CGSize = .zero
     
@@ -327,7 +360,6 @@ class CASMenuListView: UIView {
     
     private func setup(adapter: CASMenuListAdapter) {
         self.adapter = adapter
-        self.updateFontSize()
         self.updateItemSize()
         let collectionView = UICollectionView.init(frame: CGRect.zero, collectionViewLayout: self.flowLayout())
         collectionView.backgroundColor = UIColor.clear
@@ -350,11 +382,16 @@ class CASMenuListView: UIView {
     
     private func updateFontSize() {
         if adapter.useUnificationFontSize {
-            self.adapter.updateFontSize(items: self.items ?? [CASMenuItem]())
+            self.adapter.updateCurrentFontSize(items: self.items ?? [CASMenuItem]())
         }
     }
     
+    private func removeStoredItemSizeRelatives() {
+        self.adapter.removeStoredValues()
+    }
+    
     private func updateItemSize() {
+        self.updateFontSize()
         var itemSize: CGSize = .zero
         let rect = CASCommon.shared.currentDeviceAvailableRect()
         if self.adapter.allInOnePage {
@@ -368,11 +405,8 @@ class CASMenuListView: UIView {
     }
     
     @objc private func statusBarOrientationChanged(sender: Notification) {
-        self.updateFontSize()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) {
-            self.collectionView.collectionViewLayout = self.flowLayout()
-            self.collectionView.reloadData()
-        }
+        self.updateItemSize()
+        self.collectionView.reloadData()
     }
     
     private func flowLayout() -> UICollectionViewLayout {
