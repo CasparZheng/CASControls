@@ -93,6 +93,12 @@ class CASMenuListAdapter: NSObject {
         print("\(type(of: self)) deinit")
     }
     
+    func removeStoredValues() {
+        self.kVerticalMaxFontSize = 0
+        self.kHorizontalMaxFontSize = 0
+        self.currentFontSize = self.initialFontSize
+    }
+    
     // consider the orientation
     ///
     func updateCurrentFontSize(items: [CASMenuItem]) {
@@ -101,7 +107,7 @@ class CASMenuListAdapter: NSObject {
             for index in 0..<items.count {
                 let item = items[index]
                 label.text = item.title
-                label.font = UIFont.systemFont(ofSize: innerMinSize)
+                label.font = self.font(isSelected: true, fontSize: innerMinSize)
                 let tempFontSize = self.nearestFontSize(label: label)
                 if (index == 0) {
                     innerMinSize = tempFontSize
@@ -112,7 +118,7 @@ class CASMenuListAdapter: NSObject {
             return innerMinSize
         }
         
-        let label = self.normalLabel()
+        let label = self.normalLabel(isSelected: false)
         let rect = CASCommon.shared.currentDeviceAvailableRect()
         var width: CGFloat = 0
         if (self.allInOnePage) {
@@ -148,17 +154,17 @@ class CASMenuListAdapter: NSObject {
             }
         }
 
-        var minFontSize: CGFloat = maxFontSize
+        var minFontSize: CGFloat = min(maxFontSize, self.initialFontSize)
         for index in 0..<items.count {
             let item = items[index]
             label.text = item.title
-            label.font = UIFont.systemFont(ofSize: minFontSize)
+            label.font = self.font(isSelected: true, fontSize: minFontSize)
             let tempFontSize = self.getApproximateAdjustedFontSize(label: label)
             if (tempFontSize < minFontSize) {
                 minFontSize = tempFontSize
             }
         }
-        self.currentFontSize = minFontSize
+        self.currentFontSize = min(minFontSize, self.initialFontSize)
     }
     
     func fontColor(isSelected: Bool) -> UIColor {
@@ -175,8 +181,8 @@ class CASMenuListAdapter: NSObject {
         }
     }
     
-    func font(isSelected: Bool) -> UIFont {
-        return UIFont.systemFont(ofSize: self.currentFontSize, weight: isSelected ? .bold : .regular)
+    func font(isSelected: Bool, fontSize: CGFloat) -> UIFont {
+        return UIFont.systemFont(ofSize: fontSize, weight: isSelected ? .bold : .regular)
     }
 
     /// call this action when set the frame complete
@@ -186,44 +192,31 @@ class CASMenuListAdapter: NSObject {
         }
     }
     
-    func removeStoredValues() {
-        self.kVerticalMaxFontSize = 0
-        self.kHorizontalMaxFontSize = 0
-    }
-    
-    var nearestTimes: Int = 0
     func nearestFontSize(label: UILabel) -> CGFloat {
         var currentFont: UIFont = label.font
         let originalFontSize = currentFont.pointSize
         var currentSize: CGSize = ((label.text ?? "") as NSString).size(withAttributes: [NSAttributedStringKey.font: currentFont])
         if currentSize.width > label.frame.size.width && currentFont.pointSize > (originalFontSize * label.minimumScaleFactor) {
             while currentSize.width > label.frame.size.width && currentFont.pointSize > (originalFontSize * label.minimumScaleFactor) {
-                self.nearestTimes += 1
-                print("nearestTimes \(self.nearestTimes), font size = \(currentFont.pointSize)")
-                currentFont = UIFont.systemFont(ofSize: currentFont.pointSize - 1)
+                currentFont = self.font(isSelected: true, fontSize: currentFont.pointSize - 1)
                 currentSize = ((label.text ?? "") as NSString).size(withAttributes: [NSAttributedStringKey.font: currentFont])
             }
         }else {
             while currentSize.width < label.frame.size.width {
-                self.nearestTimes += 1
-                print("nearestTimes \(self.nearestTimes), font size = \(currentFont.pointSize)")
-                currentFont = UIFont.systemFont(ofSize: currentFont.pointSize + 1)
+                currentFont = self.font(isSelected: true, fontSize: currentFont.pointSize + 1)
                 currentSize = ((label.text ?? "") as NSString).size(withAttributes: [NSAttributedStringKey.font: currentFont])
             }
         }
         return currentFont.pointSize
     }
-
-    var approximateTimes: Int = 0
+    
     func getApproximateAdjustedFontSize(label: UILabel) -> CGFloat {
-        if label.adjustsFontSizeToFitWidth == true {
+        if self.useUnificationFontSize == true {
             var currentFont: UIFont = label.font
             let originalFontSize = currentFont.pointSize
             var currentSize: CGSize = ((label.text ?? "") as NSString).size(withAttributes: [NSAttributedStringKey.font: currentFont])
             while currentSize.width > label.frame.size.width && currentFont.pointSize > (originalFontSize * label.minimumScaleFactor) {
-                self.approximateTimes += 1
-                print("approximateTimes \(self.approximateTimes), font size = \(currentFont.pointSize)")
-                currentFont = UIFont.systemFont(ofSize: currentFont.pointSize - 1)
+                currentFont = self.font(isSelected: true, fontSize: currentFont.pointSize - 1)
                 currentSize = ((label.text ?? "") as NSString).size(withAttributes: [NSAttributedStringKey.font: currentFont])
             }
             return currentFont.pointSize
@@ -233,9 +226,9 @@ class CASMenuListAdapter: NSObject {
         }
     }
     
-    func normalLabel() -> UILabel {
+    func normalLabel(isSelected: Bool) -> UILabel {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: self.currentFontSize)
+        label.font = self.font(isSelected: isSelected, fontSize: self.initialFontSize)
         label.textAlignment = .center
         label.numberOfLines = 1 // designer confirmed
         //        label.adjustsFontSizeToFitWidth = self.useUnificationFontSize
@@ -271,7 +264,7 @@ private class CASMenuItemView: UICollectionViewCell {
     
     private func setup(adapter: CASMenuListAdapter, item: CASMenuItem?) {
         if self.titleLabel == nil {
-            let label = adapter.normalLabel()
+            let label = adapter.normalLabel(isSelected: false)
             label.text = item?.title
             label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
             self.contentView.addSubview(label)
@@ -303,7 +296,7 @@ private class CASMenuItemView: UICollectionViewCell {
     }
     
     private func updateUI() {
-        self.titleLabel?.font = self.adapter.font(isSelected: self.isSelected)
+        self.titleLabel?.font = self.adapter.font(isSelected: self.isSelected, fontSize: self.adapter.currentFontSize)
         self.titleLabel?.textColor = self.adapter.fontColor(isSelected: self.isSelected)
         self.indicatorView?.isHidden = !self.isSelected
     }
