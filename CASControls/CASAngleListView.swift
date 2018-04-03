@@ -80,17 +80,33 @@ class CASAngleListAdapter: NSObject {
             let label = self.normalLabel()
             var maxLabelSize: CGSize = CGSize.init(width: self.imageViewSize.width, height: 0)
             for item in items {
-                label.text = item.title
-                label.adjustsFontSizeToFitWidth = false
-                let titleSize = label.sizeThatFits(CGSize.init(width: self.imageViewSize.width, height: 1000)) // set height value 1000
-                if maxLabelSize.height < titleSize.height {
-                    maxLabelSize.height = titleSize.height
+                if item.title != "" {
+                    label.text = item.title
+                    label.adjustsFontSizeToFitWidth = false
+                    let titleSize = label.sizeThatFits(CGSize.init(width: self.imageViewSize.width, height: 1000)) // set height value 1000
+                    if maxLabelSize.height < titleSize.height {
+                        maxLabelSize.height = titleSize.height
+                    }
                 }
             }
-            let itemSize = CGSize.init(width: self.imageViewSize.width, height: self.imageViewSize.height + self.kItemImageAndLabelGap + maxLabelSize.height)
+            
+            var itemSize = CGSize.init(width: self.imageViewSize.width, height: self.imageViewSize.height)
+            if maxLabelSize.height != 0 {
+                itemSize.height += self.kItemImageAndLabelGap + maxLabelSize.height
+            }
             return itemSize
         case .adjustFontSize:
-            let itemSize = CGSize.init(width: self.imageViewSize.width, height: self.imageViewSize.height + self.kItemImageAndLabelGap + self.labelSize.height)
+            var isAllTitlesEmpty = true
+            for item in items {
+                if item.title != "" {
+                    isAllTitlesEmpty = false
+                    break;
+                }
+            }
+            var itemSize = CGSize.init(width: self.imageViewSize.width, height: self.imageViewSize.height)
+            if isAllTitlesEmpty == false {
+                itemSize.height += self.kItemImageAndLabelGap + self.labelSize.height
+            }
             return itemSize
         }
     }
@@ -150,12 +166,6 @@ private class CASAngleItemView: UICollectionViewCell {
 
     func configurateWith(adapter: CASAngleListAdapter, item: CASAngleItem?) {
         self.adapter = adapter
-        self.titleLabel?.snp.removeConstraints()
-        self.imageView?.snp.removeConstraints()
-        self.titleLabel?.removeFromSuperview()
-        self.imageView?.removeFromSuperview()
-        self.titleLabel = nil
-        self.imageView = nil
         setup(adapter: adapter, item: item)
     }
 
@@ -174,8 +184,6 @@ private class CASAngleItemView: UICollectionViewCell {
             self.imageView?.snp.makeConstraints { (make) in
                 make.size.equalTo(adapter.imageViewSize)
                 make.centerX.top.equalToSuperview()
-                make.top.leading.trailing.equalToSuperview()
-                make.height.equalTo(adapter.imageViewSize.height)
             }
         }else {
             let imageName: String = item?.imageName ?? ""
@@ -188,11 +196,12 @@ private class CASAngleItemView: UICollectionViewCell {
         if self.titleLabel == nil {
             let label = adapter.normalLabel()
             label.text = item?.title
+            let titleIsEmpty: Bool = item?.title == nil || item?.title == ""
             label.textColor = self.adapter.fontColor(isSelected: self.isSelected)
             self.contentView.addSubview(label)
             self.titleLabel = label
             self.titleLabel?.snp.makeConstraints { (make) in
-                make.top.equalTo(self.imageView!.snp.bottom).offset(adapter.kItemImageAndLabelGap)
+                make.top.equalTo(self.imageView!.snp.bottom).offset(titleIsEmpty ? 0 : adapter.kItemImageAndLabelGap)
                 make.bottom.equalToSuperview()
                 make.trailing.leading.equalToSuperview()
             }
