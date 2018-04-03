@@ -16,12 +16,31 @@ enum CASCheckBoxStyle: Int {
     case dark
 }
 
+/*
+ case top:
+ image  label  or  image label
+ label
+ label
+ 
+ case center:
+ label
+ image  label  or  image  label
+ label
+ 
+ */
+@objc(INSCheckBoxLayoutStyle)
+enum INSCheckBoxLayoutStyle: Int {
+    case top
+    case center
+}
+
 class CASCheckBoxItem: NSObject {
     typealias TapClosure = (String)->Void
     
     private(set) var title: String = ""
     private(set) var highLightRanges: [NSRange] = [NSRange]()
     private(set) var highLightClosures: [TapClosure] = [TapClosure]()
+    @objc var selectStatusChangedClosure: ((Bool)->Void)?
     var isConfirmed: Bool = false
     
     init(title: String, ranges: [NSRange]?, rangeClosures: [TapClosure]?) {
@@ -34,11 +53,13 @@ class CASCheckBoxItem: NSObject {
 }
 
 
-
 class CASCheckBoxListAdapter: NSObject {
     typealias Style = CASCheckBoxStyle
+    typealias LayoutStyle = INSCheckBoxLayoutStyle
     
-    var style: Style = .dark
+    @objc var style: Style = .dark
+    @objc var layoutStyle: LayoutStyle = .center
+
     // whether use the unification font size, if set true, will update fontSize property automatically
     var useUnificationFontSize: Bool = false
     var fontSize: CGFloat = 12.0
@@ -157,7 +178,12 @@ private class CASCheckBoxItemView: UICollectionViewCell {
             self.imageView?.snp.makeConstraints { (make) in
                 make.size.equalTo(adapter.kItemImageViewSize)
                 make.leading.equalToSuperview().offset(adapter.kItemNormalGap)
-                make.top.equalToSuperview().offset(adapter.kItemNormalGap)
+                switch adapter.layoutStyle {
+                case .center:
+                    make.centerY.equalToSuperview()
+                case .top:
+                    make.top.equalToSuperview().offset(adapter.kItemNormalGap)
+                }
             }
             
             let tapContainer = UIView() // large then response area
@@ -183,8 +209,13 @@ private class CASCheckBoxItemView: UICollectionViewCell {
             self.contentView.addSubview(label)
             self.titleLabel?.snp.makeConstraints { (make) in
                 make.leading.equalTo(self.imageView!.snp.trailing).offset(adapter.kItemNormalGap)
-                make.top.equalTo(self.imageView!)
                 make.trailing.equalToSuperview().offset(-adapter.kItemNormalGap)
+                switch adapter.layoutStyle {
+                case .center:
+                    make.centerY.equalTo(self.imageView!)
+                case .top:
+                    make.top.equalTo(self.imageView!)
+                }
             }
         }else {
             self.titleLabel?.text = item?.title
@@ -200,6 +231,8 @@ private class CASCheckBoxItemView: UICollectionViewCell {
     @objc private func confirmValueChange(sender: UITapGestureRecognizer) {
         self.isConfirmed = !self.isConfirmed
         self.item?.isConfirmed = self.isConfirmed
+        self.item?.selectStatusChangedClosure?(self.isConfirmed)
+
         updateUI()
     }
 }
@@ -280,6 +313,13 @@ class CASCheckBoxListView: UIView {
             layout.sectionFootersPinToVisibleBounds = false
         }
         return layout
+    }
+    
+    func changeSelectedStatus(item: CASCheckBoxItem, isSelected: Bool) {
+        item.isConfirmed = isSelected
+        if let index = self.items?.index(of: item) {
+            self.collectionView.reloadItems(at: [IndexPath.init(row: index, section: 0)])
+        }
     }
 }
 
