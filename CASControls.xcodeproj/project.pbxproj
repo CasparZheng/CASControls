@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		573EC93E1BD4F508B2CEE964 /* Pods_CASControlsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECECFDA085DDA19D5454790D /* Pods_CASControlsTests.framework */; };
 		921FBC3C7DF9DA3485F30F80 /* Pods_CASControlsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7681CAF88714A8B30DE8D9 /* Pods_CASControlsUITests.framework */; };
+		C7D26B7820CB6AA0001B2398 /* CASNavigationBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */; };
 		EF8CB364206F60600015CFB8 /* CASCheckBoxListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */; };
 		EF8CB366207107B80015CFB8 /* CASCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB365207107B80015CFB8 /* CASCommon.swift */; };
 		EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF3B352206B94E300CCB03A /* AppDelegate.swift */; };
@@ -59,6 +60,7 @@
 		08B3BF78E0F4CD3EBC73575B /* Pods-CASControlsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsTests/Pods-CASControlsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1789E8FD2F5828AB9F32D76F /* Pods-CASControlsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		697601D9CF1BAE69DA8FC098 /* Pods-CASControls.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControls.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControls/Pods-CASControls.debug.xcconfig"; sourceTree = "<group>"; };
+		C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASNavigationBarView.swift; sourceTree = "<group>"; };
 		C7E783D9571334B9DDAC67A7 /* Pods-CASControlsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		CF7681CAF88714A8B30DE8D9 /* Pods_CASControlsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CASControlsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E502E4955C825880693BEE6F /* Pods_CASControls.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CASControls.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +169,7 @@
 				EFF3B380206B94FC00CCB03A /* CASMenuListView.swift */,
 				EFF3B389206B980800CCB03A /* CASButton.swift */,
 				EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */,
+				C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */,
 				EFF3B356206B94E300CCB03A /* Main.storyboard */,
 				EFF3B359206B94E300CCB03A /* Assets.xcassets */,
 				EFF3B35B206B94E300CCB03A /* LaunchScreen.storyboard */,
@@ -206,7 +209,6 @@
 				EFF3B34D206B94E300CCB03A /* Resources */,
 				EFF3B388206B952400CCB03A /* Embed Frameworks */,
 				A6D60011C2F9064224DDA232 /* [CP] Embed Pods Frameworks */,
-				396789FDD4E5C77FE09BA931 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -225,8 +227,6 @@
 				EFF3B35F206B94E300CCB03A /* Sources */,
 				EFF3B360206B94E300CCB03A /* Frameworks */,
 				EFF3B361206B94E300CCB03A /* Resources */,
-				FE1EE2AF06570D5AF16FB790 /* [CP] Embed Pods Frameworks */,
-				B8E747DF86BC5715875E6602 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -246,8 +246,6 @@
 				EFF3B36A206B94E300CCB03A /* Sources */,
 				EFF3B36B206B94E300CCB03A /* Frameworks */,
 				EFF3B36C206B94E300CCB03A /* Resources */,
-				1A244A4529B2024BF2CCA24C /* [CP] Embed Pods Frameworks */,
-				250DDB30CEF5957EC87DFF46 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -369,51 +367,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1A244A4529B2024BF2CCA24C /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		250DDB30CEF5957EC87DFF46 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		396789FDD4E5C77FE09BA931 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControls/Pods-CASControls-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		A6D60011C2F9064224DDA232 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -436,21 +389,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControls/Pods-CASControls-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B8E747DF86BC5715875E6602 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControlsTests/Pods-CASControlsTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		F5EEA7D8F90FE4D2BD055609 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -469,21 +407,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FE1EE2AF06570D5AF16FB790 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-CASControlsTests/Pods-CASControlsTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -498,6 +421,7 @@
 				EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */,
 				EFF3B38A206B980800CCB03A /* CASButton.swift in Sources */,
 				EF8CB366207107B80015CFB8 /* CASCommon.swift in Sources */,
+				C7D26B7820CB6AA0001B2398 /* CASNavigationBarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

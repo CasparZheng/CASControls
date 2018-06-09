@@ -18,7 +18,8 @@ class ViewController: UIViewController {
 //        addMenuList()
 //        addAngleList()
 //        addCheckboxList()
-        
+//        addNavigationBarView()
+        testNavigationItem()
     }
     
     override func didReceiveMemoryWarning() {
@@ -33,6 +34,111 @@ class ViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
+    
+    func addNavigationBarView() {
+        func createButton(title: String?) -> UIButton {
+            let button = UIButton.init(type: UIButtonType.custom)
+            button.setTitle("beijing", for: UIControlState.normal)
+            button.addTarget(self, action: #selector(navigationBarViewItemsAction(_:)), for: UIControlEvents.touchUpInside)
+            return button
+        }
+        self.navigationController?.navigationBar.isHidden = true
+        let navigationBarView = CASNavigationBarView.init(height: 128)
+        navigationBarView.title = "beijing"
+        navigationBarView.prompt = "I come from China, where are u from"
+        navigationBarView.backgroundColor = UIColor.green
+        let buttonLeft1 = createButton(title: "xizang")
+        let buttonLeft2 = createButton(title: "xinjiang")
+        let buttonLeft3 = createButton(title: "sichuan")
+        let buttonLeft4 = createButton(title: "guizhou")
+        let buttonLeft5 = createButton(title: "yunnan")
+        let buttonLeft6 = createButton(title: "qinghai")
+        
+        let buttonRight1 = createButton(title: "beijing")
+        let buttonRight2 = createButton(title: "shanghai")
+        let buttonRight3 = createButton(title: "zhejiang")
+        let buttonRight4 = createButton(title: "fujian")
+        let buttonRight5 = createButton(title: "guangzhou")
+        let buttonRight6 = createButton(title: "jiangxi")
+        
+        navigationBarView.leftBarButtonItems = [
+            buttonLeft1,
+            buttonLeft2,
+            buttonLeft3,
+            buttonLeft4,
+            buttonLeft5,
+            buttonLeft6,
+        ]
+        navigationBarView.rightBarButtonItems = [
+            buttonRight1,
+            buttonRight2,
+            buttonRight3,
+            buttonRight4,
+            buttonRight5,
+            buttonRight6,
+        ]
+        
+        self.view.addSubview(navigationBarView)
+    }
+    @objc func navigationBarViewItemsAction(_ item: UIButton) {
+        print("click item: \(item.titleLabel?.text as Any)")
+    }
+    func testNavigationItem() {
+        self.navigationItem.prompt = "beijingbeijing"
+        self.navigationItem.title = "1123945"
+//        let label = UILabel()
+//        label.text = "shenzhen"
+//        label.sizeToFit()
+//        self.navigationItem.titleView = label
+        self.navigationItem.leftItemsSupplementBackButton = false
+        let buttonLeft1 = UIBarButtonItem.init(title: "xizang", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonLeft2 = UIBarButtonItem.init(title: "xinjiang", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonLeft3 = UIBarButtonItem.init(title: "qinghai", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonLeft4 = UIBarButtonItem.init(title: "neimenggu", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonLeft5 = UIBarButtonItem.init(title: "shanxi", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        
+        let buttonRight1 = UIBarButtonItem.init(title: "shanghai", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonRight2 = UIBarButtonItem.init(title: "zhejiang", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonRight3 = UIBarButtonItem.init(title: "fujian", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonRight4 = UIBarButtonItem.init(title: "guangzhou", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        let buttonRight5 = UIBarButtonItem.init(title: "yunnan", style: UIBarButtonItemStyle.plain, target: self, action: #selector(leftBarButtonItemAction(_:)))
+        
+        self.navigationItem.leftBarButtonItems = [
+            buttonLeft1,
+            buttonLeft2,
+            buttonLeft3,
+            buttonLeft4,
+        ]
+        self.navigationItem.rightBarButtonItems = [
+            buttonRight1,
+            buttonRight2,
+            buttonRight3,
+            buttonRight4,
+            buttonRight5,
+        ]
+        self.navigationItem.backBarButtonItem = buttonLeft5
+        print("left item: \(self.navigationItem.leftBarButtonItem as Any)")
+        print("back item: \(self.navigationItem.backBarButtonItem as Any)")
+        print("items: \(self.navigationItem.leftBarButtonItems as Any)")
+        
+        let newVc: UIViewController = UIViewController()
+        newVc.view.backgroundColor = UIColor.green
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(dissmiss(_:)))
+        newVc.view.addGestureRecognizer(tap)
+        newVc.navigationItem.leftItemsSupplementBackButton = false
+        newVc.navigationItem.backBarButtonItem = buttonRight5
+        newVc.navigationItem.leftBarButtonItems = [buttonLeft1, buttonLeft2]
+        self.navigationController?.pushViewController(newVc, animated: true)
+    }
+    
+    @objc private func leftBarButtonItemAction(_ item: UIBarButtonItem) {
+        print("click: \(item.title as Any)")
+    }
+    @objc private func dissmiss(_ tap: UITapGestureRecognizer) {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    
     
     func addAngleList() {
         let item1 = CASAngleItem.init(title: "First", imageName: "sharepage_ic_visualchoice04")
