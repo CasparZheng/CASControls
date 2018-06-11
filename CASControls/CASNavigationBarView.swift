@@ -11,6 +11,7 @@ private let kAnimationTime: TimeInterval = 0.3
 private let kPromptFontSize: CGFloat = 14.0
 private let kTitleLabelFontSize: CGFloat = 17.0
 private let kStackViewItemGap: CGFloat = 4.0
+private let kMinClickWidthAndHeight: CGFloat = 44.0
 
 // todo: 1.just display part of items when items too many
 
@@ -227,7 +228,7 @@ class CASNavigationBarView: UIView {
     }
     
     convenience init() {
-        self.init(height: UIApplication.shared.statusBarFrame.height + 44)
+        self.init(height: UIApplication.shared.statusBarFrame.height + 44.0)
     }
     
     /// designated initialize
@@ -248,7 +249,8 @@ class CASNavigationBarView: UIView {
             }
             for item in items {
                 item.sizeToFit()
-                totalLength += item.bounds.width
+                let itemLength = item.bounds.width < kMinClickWidthAndHeight ? kMinClickWidthAndHeight : item.bounds.width
+                totalLength += itemLength
             }
             return totalLength + CGFloat(items.count - 1) * kStackViewItemGap
         }
@@ -290,7 +292,7 @@ class CASNavigationBarView: UIView {
         var backItemLength: CGFloat = 0
         if let backItem = backBarButtonItem {
             backItemLength = calculateLength(items: [backItem])
-            backItemLength = backItemLength < 44.0 ? 44.0 : backItemLength
+            backItemLength = backItemLength < kMinClickWidthAndHeight ? kMinClickWidthAndHeight : backItemLength
         }
         
         if let leftItems = leftBarButtonItems, leftItems.count > 0, let rightItems = rightBarButtonItems, rightItems.count > 0 {
@@ -337,17 +339,17 @@ class CASNavigationBarView: UIView {
                 rightStackView?.frame = CGRect.init(x: size.width - startAndEndGap - totalLength, y: startLayoutY, width: totalLength, height: titleHeight)
                 var remainTitleWidth: CGFloat = size.width - doubleStartAndEndGap - totalLength - backItemLength
                 if backItemLength == 0 {
-                     remainTitleWidth -= stackViewAndTitleGap * 2
+                    remainTitleWidth -= stackViewAndTitleGap
                 }else {
-                    remainTitleWidth -= stackViewAndTitleGap * 3
+                    remainTitleWidth -= stackViewAndTitleGap * 2
                 }
                 if remainTitleWidth > 0 {
-                    layoutTitleIn(rect: CGRect.init(x: remainTitleWidth + stackViewAndTitleGap, y: startLayoutY, width: remainTitleWidth, height: titleHeight))
+                    layoutTitleIn(rect: CGRect.init(x: startAndEndGap + backItemLength + stackViewAndTitleGap, y: startLayoutY, width: remainTitleWidth, height: titleHeight))
                 }
             }
         }else {
             backBarButtonItem?.frame = CGRect.init(x: startAndEndGap, y: startLayoutY, width: backItemLength, height: titleHeight)
-            layoutTitleIn(rect: CGRect.init(x: startAndEndGap + backItemLength, y: startLayoutY, width: size.width - doubleStartAndEndGap - backItemLength, height: titleHeight))
+            layoutTitleIn(rect: CGRect.init(x: startAndEndGap + backItemLength + stackViewAndTitleGap, y: startLayoutY, width: size.width - doubleStartAndEndGap - backItemLength - stackViewAndTitleGap, height: titleHeight))
         }
         
         if hasPromptLabel {
@@ -404,10 +406,51 @@ extension CASNavigationBarView {
     }
     private func normalStackView() -> UIStackView {
         let stackView = UIStackView()
-        stackView.alignment = UIStackViewAlignment.center
+        stackView.alignment = UIStackViewAlignment.fill
         stackView.axis = UILayoutConstraintAxis.horizontal
         stackView.distribution = UIStackViewDistribution.fillProportionally
         stackView.spacing = kStackViewItemGap
         return stackView
     }
 }
+
+extension CASNavigationBarView {
+    /// unsupport: possibleTitles / landscapeImagePhone / largeContentSizeImage / landscapeImagePhoneInsets / largeContentSizeImageInsets, and so on
+    class func buttonFromUIBarButtonItem(item: UIBarButtonItem) -> UIButton {
+        let button = UIButton.init(type: UIButtonType.custom) // style
+//        button.bounds.width = item.width
+        if let target = item.target, let action = item.action {
+            button.addTarget(target, action: action, for: UIControlEvents.touchUpInside)
+        }
+        button.isEnabled = item.isEnabled
+        button.setTitle(item.title, for: UIControlState.normal)
+        button.setImage(item.image, for: UIControlState.normal)
+        button.imageEdgeInsets = item.imageInsets
+        button.tag = item.tag
+        return button
+    }
+    class func buttonsFromUIBarButtonItems(items: [UIBarButtonItem]) -> [UIButton] {
+        var result: [UIButton] = [UIButton]()
+        for item in items {
+            let button = buttonFromUIBarButtonItem(item: item)
+            result.append(button)
+        }
+        return result
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
