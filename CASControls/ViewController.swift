@@ -18,8 +18,8 @@ class ViewController: UIViewController {
 //        addMenuList()
 //        addAngleList()
 //        addCheckboxList()
-//        addNavigationBarView()
-        testNavigationItem()
+        addNavigationBarView()
+//        testNavigationItem()
     }
     
     override func didReceiveMemoryWarning() {

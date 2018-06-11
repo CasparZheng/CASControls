@@ -19,4 +19,16 @@ class CASCommon: NSObject {
         let rect = UIEdgeInsetsInsetRect(UIScreen.main.bounds, safeInsets)
         return rect
     }
+    
+    func currentViewController(from view: UIView) -> UIViewController? {
+        var innerView: UIView? = view
+        while innerView != nil {
+            if let responder = innerView?.next, let vc = responder as? UIViewController {
+                return vc
+            }
+            innerView = innerView?.superview
+        }
+        return nil
+    }
+
 }

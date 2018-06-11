@@ -67,8 +67,9 @@ class CASNavigationBarView: UIView {
         }
     }
     
-    /// unsupport
+    /// semantic changed: used in current view, not next pushed item, if leftBarButtonItem exist, this value is empty. by default, it has only image('<') in UI, combine a dismiss or pop self target(event is touchUpInside), without title.
     var backBarButtonItem: UIButton?
+
     /// unsupport
     var hidesBackButton: Bool = false
     func setHidesBackButton(_ isHide: Bool, animated: Bool) {
@@ -159,7 +160,9 @@ class CASNavigationBarView: UIView {
             }
             if leftBarButtonItem == nil && leftBarButtonItems != nil {
                 triggerFromLeftBarButtonItem = true
-                leftBarButtonItems?.removeFirst()
+                if leftBarButtonItems!.count > 0 {
+                    leftBarButtonItems?.removeFirst()
+                }
             }else if let item = leftBarButtonItem {
                 triggerFromLeftBarButtonItem = true
                 if leftBarButtonItems == nil {
@@ -180,7 +183,9 @@ class CASNavigationBarView: UIView {
             }
             if rightBarButtonItem == nil && rightBarButtonItems != nil {
                 triggerFromRightBarButtonItem = true
-                rightBarButtonItems?.removeFirst()
+                if rightBarButtonItems!.count > 0 {
+                    rightBarButtonItems?.removeFirst()
+                }
             }else if let item = rightBarButtonItem {
                 triggerFromRightBarButtonItem = true
                 if rightBarButtonItems == nil {
@@ -216,8 +221,6 @@ class CASNavigationBarView: UIView {
     var searchController: UISearchController?
     /// unsupport, ios 11.0
     var hidesSearchBarWhenScrolling: Bool = true
-    /// image(<) will be displayed in letBarButtonItem location if meet follow two conditions: 1.set this property value to true;2.letBarButtonItem value is nil
-    var showDefaultBackButton: Bool = true
     
     convenience override init(frame: CGRect) {
         self.init(height: frame.height)
@@ -230,7 +233,7 @@ class CASNavigationBarView: UIView {
     /// designated initialize
     init(height: CGFloat) {
         super.init(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: height))
-        
+        self.configureBackBarButtonItem()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -284,8 +287,14 @@ class CASNavigationBarView: UIView {
         let startAndEndGap: CGFloat = 8.0
         let stackViewAndTitleGap: CGFloat = (titleLabel != nil || titleView != nil) ? 4.0 : 0 // stack view and title view gap, or stack views gap
         let doubleStartAndEndGap: CGFloat = startAndEndGap * 2
+        var backItemLength: CGFloat = 0
+        if let backItem = backBarButtonItem {
+            backItemLength = calculateLength(items: [backItem])
+            backItemLength = backItemLength < 44.0 ? 44.0 : backItemLength
+        }
         
-        if let leftItems = leftBarButtonItems, let rightItems = rightBarButtonItems {
+        if let leftItems = leftBarButtonItems, leftItems.count > 0, let rightItems = rightBarButtonItems, rightItems.count > 0 {
+            backBarButtonItem?.frame = CGRect.zero
             let totalLeftLength: CGFloat = calculateLength(items: leftItems)
             let totalRightLength: CGFloat = calculateLength(items: rightItems)
             let totalLength: CGFloat = totalLeftLength + totalRightLength
@@ -305,7 +314,8 @@ class CASNavigationBarView: UIView {
                 }
             }
             
-        }else if let leftItems = leftBarButtonItems {
+        }else if let leftItems = leftBarButtonItems, leftItems.count > 0 {
+            backBarButtonItem?.frame = CGRect.zero
             let totalLength: CGFloat = calculateLength(items: leftItems)
             if (totalLength + doubleStartAndEndGap) > size.width {
                 leftStackView?.frame = CGRect.init(x: startAndEndGap, y: startLayoutY, width: size.width - doubleStartAndEndGap, height: titleHeight)
@@ -317,20 +327,27 @@ class CASNavigationBarView: UIView {
                     layoutTitleIn(rect: CGRect.init(x: startAndEndGap + totalLength + stackViewAndTitleGap, y: startLayoutY, width: remainTitleWidth, height: titleHeight))
                 }
             }
-        }else if let rightItems = rightBarButtonItems {
+        }else if let rightItems = rightBarButtonItems, rightItems.count > 0 {
             let totalLength: CGFloat = calculateLength(items: rightItems)
-            if (totalLength + doubleStartAndEndGap) > size.width {
-                rightStackView?.frame = CGRect.init(x: startAndEndGap, y: startLayoutY, width: size.width - doubleStartAndEndGap, height: titleHeight)
+            backBarButtonItem?.frame = CGRect.init(x: startAndEndGap, y: startLayoutY, width: backItemLength, height: titleHeight)
+            if (totalLength + doubleStartAndEndGap + backItemLength) > size.width {
+                rightStackView?.frame = CGRect.init(x: startAndEndGap + backItemLength, y: startLayoutY, width: size.width - doubleStartAndEndGap - backItemLength, height: titleHeight)
                 layoutTitleIn(rect: CGRect.zero)
             }else {
                 rightStackView?.frame = CGRect.init(x: size.width - startAndEndGap - totalLength, y: startLayoutY, width: totalLength, height: titleHeight)
-                let remainTitleWidth: CGFloat = size.width - doubleStartAndEndGap - totalLength - stackViewAndTitleGap * 2
+                var remainTitleWidth: CGFloat = size.width - doubleStartAndEndGap - totalLength - backItemLength
+                if backItemLength == 0 {
+                     remainTitleWidth -= stackViewAndTitleGap * 2
+                }else {
+                    remainTitleWidth -= stackViewAndTitleGap * 3
+                }
                 if remainTitleWidth > 0 {
                     layoutTitleIn(rect: CGRect.init(x: remainTitleWidth + stackViewAndTitleGap, y: startLayoutY, width: remainTitleWidth, height: titleHeight))
                 }
             }
         }else {
-            layoutTitleIn(rect: CGRect.init(x: startAndEndGap, y: startLayoutY, width: size.width - doubleStartAndEndGap, height: titleHeight))
+            backBarButtonItem?.frame = CGRect.init(x: startAndEndGap, y: startLayoutY, width: backItemLength, height: titleHeight)
+            layoutTitleIn(rect: CGRect.init(x: startAndEndGap + backItemLength, y: startLayoutY, width: size.width - doubleStartAndEndGap - backItemLength, height: titleHeight))
         }
         
         if hasPromptLabel {
@@ -342,6 +359,41 @@ class CASNavigationBarView: UIView {
 
 // MARK: private
 extension CASNavigationBarView {
+    private func configureBackBarButtonItem() {
+        if let item = backBarButtonItem {
+            if item.responds(to: #selector(backAction)) {
+                // do nothing
+            }else {
+                item.addTarget(self, action: #selector(backAction), for: UIControlEvents.touchUpInside)
+            }
+        }else {
+            let button = UIButton.init(type: UIButtonType.custom)
+            button.setImage(UIImage.init(named: "back_icon", in: Bundle.init(for: self.classForCoder), compatibleWith: nil), for: UIControlState.normal)
+            button.addTarget(self, action: #selector(backAction), for: UIControlEvents.touchUpInside)
+            self.addSubview(button)
+            backBarButtonItem = button
+        }
+    }
+    
+    @objc private func backAction() {
+        func currentViewController() -> UIViewController? {
+            var view = self.superview
+            while view != nil {
+                if let responder = view?.next, let vc = responder as? UIViewController {
+                    return vc
+                }
+                view = view?.superview
+            }
+            return nil
+        }
+        let vc = currentViewController()
+        if let nav = vc?.navigationController {
+            nav.popViewController(animated: true)
+        }else {
+            vc?.dismiss(animated: true, completion: nil)
+        }
+    }
+
     private func normalLabel(text: String?) -> UILabel {
         let label = UILabel()
         label.text = text
