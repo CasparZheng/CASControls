@@ -390,7 +390,11 @@ extension CASNavigationBarView {
         }
         let vc = currentViewController()
         if let nav = vc?.navigationController {
-            nav.popViewController(animated: true)
+            if nav.viewControllers.count > 1 {
+                nav.popViewController(animated: true)
+            }else {
+                vc?.dismiss(animated: true, completion: nil)
+            }
         }else {
             vc?.dismiss(animated: true, completion: nil)
         }
