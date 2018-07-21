@@ -18,8 +18,9 @@ class ViewController: UIViewController {
 //        addMenuList()
 //        addAngleList()
 //        addCheckboxList()
-        addNavigationBarView()
+//        addNavigationBarView()
 //        testNavigationItem()
+        addAlignView()
     }
     
     override func didReceiveMemoryWarning() {
@@ -33,6 +34,42 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    func addAlignView() {
+        
+        // both images and titles
+        let alignView = CASAlignView.init(frame: CGRect.init(x: 100, y: 100, width: 200, height: 100))
+        alignView.imagePosition = .bottom
+        alignView.backgroundColor = UIColor.green
+        alignView.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        alignView.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        alignView.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        alignView.addTitle(title: "Beijing", action: { (gestureType) in
+            print("\(gestureType)")
+        }, actionType: .tap)
+        alignView.addTitle(title: "Shenzhen", action: nil, actionType: .none)
+        self.view.addSubview(alignView)
+        
+        
+        // only images
+        let alignView2 = CASAlignView.init(frame: CGRect.init(x: 100, y: 250, width: 200, height: 100))
+        alignView2.backgroundColor = UIColor.green
+        alignView2.imagesAlignDirection = .horizontal
+        alignView2.imagePosition = .bottom
+        alignView2.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        alignView2.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        alignView2.addImage(image: UIImage.init(named: "back_icon"), action: nil, actionType: .none)
+        self.view.addSubview(alignView2)
+
+
+        // only titles
+        let alignView3 = CASAlignView.init(frame: CGRect.init(x: 100, y: 400, width: 200, height: 100))
+        alignView3.backgroundColor = UIColor.green
+        alignView3.addTitle(title: "Shenzhen", action: nil, actionType: .none)
+        alignView3.addTitle(title: "Beijing", action: nil, actionType: .none)
+        alignView3.addTitle(title: "Shanghai", action: nil, actionType: .none)
+        self.view.addSubview(alignView3)
     }
     
     func addNavigationBarView() {

@@ -8,6 +8,34 @@
 
 import UIKit
 
+enum CASPosition: UInt {
+    case top
+    case left
+    case bottom
+    case right
+}
+
+enum CASDirection: UInt {
+    case left
+    case right
+    case up
+    case down
+    case horizontal // contain left/right
+    case vertical // contain up/down
+    case all // contain left/right/up/down
+}
+
+enum CASGestureType {
+    case none
+    case tap
+    case pan
+    case pinch
+    case longPress
+    case swip(CASDirection)
+    case rotation
+}
+
+
 class CASCommon: NSObject {
     static let shared = CASCommon()
     

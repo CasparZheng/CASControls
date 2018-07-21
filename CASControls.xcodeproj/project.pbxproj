@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		573EC93E1BD4F508B2CEE964 /* Pods_CASControlsTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECECFDA085DDA19D5454790D /* Pods_CASControlsTests.framework */; };
 		921FBC3C7DF9DA3485F30F80 /* Pods_CASControlsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7681CAF88714A8B30DE8D9 /* Pods_CASControlsUITests.framework */; };
+		C7936BFC2101CDC30027CE17 /* CASAlignView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7936BFB2101CDC30027CE17 /* CASAlignView.swift */; };
 		C7D26B7820CB6AA0001B2398 /* CASNavigationBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */; };
 		EF8CB364206F60600015CFB8 /* CASCheckBoxListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */; };
 		EF8CB366207107B80015CFB8 /* CASCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8CB365207107B80015CFB8 /* CASCommon.swift */; };
@@ -60,6 +61,7 @@
 		08B3BF78E0F4CD3EBC73575B /* Pods-CASControlsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsTests/Pods-CASControlsTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1789E8FD2F5828AB9F32D76F /* Pods-CASControlsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		697601D9CF1BAE69DA8FC098 /* Pods-CASControls.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControls.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControls/Pods-CASControls.debug.xcconfig"; sourceTree = "<group>"; };
+		C7936BFB2101CDC30027CE17 /* CASAlignView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CASAlignView.swift; sourceTree = "<group>"; };
 		C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CASNavigationBarView.swift; sourceTree = "<group>"; };
 		C7E783D9571334B9DDAC67A7 /* Pods-CASControlsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CASControlsUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CASControlsUITests/Pods-CASControlsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		CF7681CAF88714A8B30DE8D9 /* Pods_CASControlsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CASControlsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +172,7 @@
 				EFF3B389206B980800CCB03A /* CASButton.swift */,
 				EF8CB363206F60600015CFB8 /* CASCheckBoxListView.swift */,
 				C7D26B7720CB6AA0001B2398 /* CASNavigationBarView.swift */,
+				C7936BFB2101CDC30027CE17 /* CASAlignView.swift */,
 				EFF3B356206B94E300CCB03A /* Main.storyboard */,
 				EFF3B359206B94E300CCB03A /* Assets.xcassets */,
 				EFF3B35B206B94E300CCB03A /* LaunchScreen.storyboard */,
@@ -416,6 +419,7 @@
 			files = (
 				EFF3B382206B94FD00CCB03A /* CASMenuListView.swift in Sources */,
 				EF8CB364206F60600015CFB8 /* CASCheckBoxListView.swift in Sources */,
+				C7936BFC2101CDC30027CE17 /* CASAlignView.swift in Sources */,
 				EFF3B355206B94E300CCB03A /* ViewController.swift in Sources */,
 				EFF3B383206B94FD00CCB03A /* CASAngleListView.swift in Sources */,
 				EFF3B353206B94E300CCB03A /* AppDelegate.swift in Sources */,
